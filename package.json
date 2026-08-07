@@ -1,0 +1,10 @@
+{
+  "name": "amb-hml-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"blue.bold,cyan.bold\" \"cross-env ENV=desenvolvimento PORT=8080 DB_PATH=./app/infra/database.db go run ./app/backend/main.go\" \"cd app/frontend && npm run dev -- --port 3000\"",
+    "hml": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"amber.bold,yellow.bold\" \"cross-env ENV=homologacao PORT=8081 DB_PATH=./hml/infra/database.db go run ./app/backend/main.go\" \"cd app/frontend && npm run dev:hml -- --port 3001\"",
+    "prod": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"emerald.bold,green.bold\" \"cross-env ENV=producao PORT=8082 DB_PATH=./prod/infra/database.db go run ./app/backend/main.go\" \"cd app/frontend && npm run build && npm run preview -- --port 3002\""
+  }
+}

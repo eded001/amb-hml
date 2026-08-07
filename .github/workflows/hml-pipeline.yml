@@ -1,0 +1,55 @@
+name: Pipeline de Homologação (HML)
+
+on:
+  push:
+    branches: [ hml, staging, release/* ]
+  pull_request:
+    branches: [ hml, staging ]
+  workflow_dispatch:
+
+jobs:
+  backend-test-build:
+    name: Validar Backend (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Go 1.26
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Compilar Backend
+        run: |
+          cd app/backend
+          go build -v -o server main.go
+
+      - name: Executar Testes Rápidos / Health Check
+        run: |
+          cd app/backend
+          ENV=homologacao PORT=8081 go run main.go &
+          sleep 3
+          curl --fail http://localhost:8081/health || exit 1
+
+  frontend-test-build:
+    name: Validar Frontend (React + Vite)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências
+        run: |
+          cd app/frontend
+          npm ci || npm install
+
+      - name: Compilar Frontend para Homologação
+        run: |
+          cd app/frontend
+          npm run build:hml
