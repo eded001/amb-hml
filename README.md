@@ -1,59 +1,70 @@
-# 🚀 Amb-HML - Visão Geral do Sistema
+# Amb-HML
 
-Aplicação simplificada com suporte a múltiplos ambientes (**DEV**, **HML** e **PROD**), interface moderna em **React + Tailwind CSS + Lucide Icons**, servidor em **Go** e persistência **SQLite** isolada.
+Aplicação full stack criada para demonstrar **separação real de ambientes DEV, HML e PROD**, com frontend React, backend Go e persistência SQLite isolada por ambiente.
 
----
+## Stack
 
-## ⚡ Como Executar
+- React 19
+- Vite
+- Tailwind CSS
+- Go
+- SQLite
+- GitHub Actions
+- Node.js para orquestração dos ambientes
 
-Escolha o ambiente e rode o comando na raíz do projeto (inicia Backend e Frontend juntos):
+## Ambientes
 
-- **Desenvolvimento (DEV)**: `npm run dev` _(Frontend: http://localhost:3000 | Backend: http://localhost:8080)_
-- **Homologação (HML)**: `npm run hml` _(Frontend: http://localhost:3001 | Backend: http://localhost:8081)_
-- **Produção (PROD)**: `npm run prod` _(Frontend: http://localhost:3002 | Backend: http://localhost:8082)_
+| Ambiente | Frontend | Backend | Banco |
+|---|---:|---:|---|
+| DEV | 3000 | 8080 | `./app/infra/database.db` |
+| HML | 3001 | 8081 | `./hml/infra/database.db` |
+| PROD | 3002 | 8082 | `./prod/infra/database.db` |
 
-_(Também é possível executar via PowerShell com `.\run-dev.ps1`, `.\hml\run-hml.ps1` ou `.\prod\run-prod.ps1`)_
+Cada ambiente utiliza seu próprio arquivo SQLite, evitando compartilhamento acidental de dados entre desenvolvimento, homologação e produção.
 
----
+## Executando
 
-## 📌 Resumo por Frente de Desenvolvimento
+Na raiz do projeto:
 
-### 🎨 1. Frontend (`/app/frontend`)
+```bash
+npm install
+npm run dev
+```
 
-- **Tecnologias**: React 19 + Vite + Tailwind CSS + Lucide Icons.
-- **Função**: Interface gráfica interativa para criar, listar e remover itens.
-- **Destaque**: Exibe um **Banner de Ambiente** (DEV = Azul, HML = Laranja, PROD = Verde) e mostra em tempo real qual arquivo SQLite está sendo manipulado.
+Homologação:
 
-### ⚙️ 2. Backend (`/app/backend`)
+```bash
+npm run hml
+```
 
-- **Tecnologias**: Go (Golang) com driver `modernc.org/sqlite` (Go puro).
-- **Função**: API HTTP REST (`/health`, `/api/info`, `/api/items`).
-- **Destaque**: Conecta dinamicamente ao arquivo SQLite do ambiente ativo, gerando tabelas e dados iniciais automaticamente.
+Produção:
 
-### 🗄️ 3. Infraestrutura & Banco de Dados (`/infra`)
+```bash
+npm run prod
+```
 
-- **Tecnologia**: SQLite (`database.db`).
-- **Função**: Persistência física em arquivos `.db` 100% isolados por ambiente:
-  - `DEV`: `./app/infra/database.db`
-  - `HML`: `./hml/infra/database.db`
-  - `PROD`: `./prod/infra/database.db`
+Também existem scripts PowerShell/Shell para inicialização dos ambientes.
 
-### 🧪 4. Ambiente de Homologação (`/hml`)
+## Arquitetura
 
-- **Função**: Espaço isolado para testes e validação de QA em staging.
-- **Portas**: Frontend `3001` | Backend `8081`.
+```text
+.
+├── app/
+│   ├── backend/
+│   ├── frontend/
+│   └── infra/
+├── hml/
+├── prod/
+├── docs/
+└── .github/workflows/
+```
 
-### 🚀 5. Ambiente de Produção (`/prod`)
+O backend expõe endpoints REST como `/health`, `/api/info` e `/api/items`, enquanto o frontend identifica visualmente o ambiente ativo.
 
-- **Função**: Configuração do ambiente estável final.
-- **Portas**: Frontend `3002` | Backend `8082`.
+## CI/CD
 
-### 🔄 6. CI/CD (`/.github/workflows`)
+O projeto inclui workflow do GitHub Actions voltado à validação da branch de homologação.
 
-- **Automação**: Workflow `hml-pipeline.yml` no GitHub Actions para testar compilações em commits da branch `hml`.
+## Documentação
 
----
-
-## 📚 Documentação Completa
-
-Manual unificado e direto disponível em [`/docs/manual.md`](file:///c:/Users/Ed/Documents/GitHub/Amb-HML/docs/manual.md).
+Consulte [`docs/manual.md`](./docs/manual.md) para detalhes adicionais.
